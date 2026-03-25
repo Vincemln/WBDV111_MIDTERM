@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Luna Vista Resort & Hotel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    scroll-behavior: smooth;
+}
+
+header {
+    background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945') no-repeat center center/cover;
+    height: 80vh;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 50px;
+    background: rgba(0,0,0,0.6);
+    padding: 15px 30px;
+    border-radius: 5px;
+}
+
+header p {
+    margin-top: 15px;
+    font-size: 20px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+nav {
+    background: #222;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: gold;
+}
+
+section {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.rooms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.room-card {
+    background: white;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.room-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.room-card h3 {
+    margin: 15px 0;
+}
+
+.room-card p {
+    padding: 0 15px 15px;
+}
+
+.btn {
+    display: inline-block;
+    margin: 15px;
+    padding: 10px 20px;
+    background: gold;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.btn:hover {
+    background: orange;
+}
+
+footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.booking-form input, .booking-form select {
+    padding: 10px;
+    margin: 10px;
+    width: 250px;
+}
+
+.booking-form button {
+    padding: 10px 20px;
+    background: gold;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.booking-form button:hover {
+    background: orange;
+}
+
+.success-message {
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Luna Vista Resort & Hotel</h1>
+    <p>Luxury & Comfort sa iisang lugar </p>
+</header>
+
+<nav>
+    <a href="#about">About</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#booking">Booking</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section id="about">
+    <h2>About Us</h2>
+    <p>Welcome sa Luna Vista Resort, maluwag, malaki ang hotel & swimming pool.</p>
+</section>
+
+<section id="rooms">
+    <h2>Our Rooms</h2>
+    <div class="rooms">
+
+        <div class="room-card">
+            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32">
+            <h3>Deluxe Room</h3>
+            <p>maganda ang view pwede ka maglaro mag-isa.</p>
+            <button class="btn" onclick="selectRoom('Deluxe Room')">iBook mo na!</button>
+        </div>
+
+        <div class="room-card">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b">
+            <h3>Executive Suite</h3>
+            <p>Luxury, pwede kayo mag takutan.</p>
+            <button class="btn" onclick="selectRoom('Executive Suite')">iBook mo na!</button>
+        </div>
+
+        <div class="room-card">
+            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a">
+            <h3>Family Room</h3>
+            <p>pang pamilyado lang to.</p>
+            <button class="btn" onclick="selectRoom('Family Room')">iBook mo na!</button>
+        </div>
+
+    </div>
+</section>
+
+<section id="booking">
+    <h2>ibook mo na kase yan!</h2>
+    <form class="booking-form" onsubmit="return handleBooking(event)">
+        <input type="text" id="name" placeholder="Full Name" required><br>
+        <input type="email" id="email" placeholder="Email Address" required><br>
+        <input type="date" id="checkin" required>
+        <input type="date" id="checkout" required><br>
+        <select id="roomType" required>
+            <option value="">Select Room Type</option>
+            <option>Deluxe Room</option>
+            <option>Executive Suite</option>
+            <option>Family Room</option>
+        </select><br>
+        <button type="submit">Reserve Now</button>
+        <div class="success-message" id="successMessage"></div>
+    </form>
+</section>
+
+<section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: info@lunavistacom</p>
+    <p>Phone: +1 234 567 890</p>
+    <p>Address: 123 Main Street, Your City</p>
+</section>
+
+<footer>
+    <p>&copy; 2026 Luna VIsta Resort & Hotel. All Rights Reserved.</p>
+</footer>
+
+<script>
+function selectRoom(roomName) {
+    document.getElementById("roomType").value = roomName;
+    document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+}
+
+function handleBooking(event) {
+    event.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let checkin = document.getElementById("checkin").value;
+    let checkout = document.getElementById("checkout").value;
+    let room = document.getElementById("roomType").value;
+
+    if (!name || !email || !checkin || !checkout || !room) {
+        alert("Please fill in all fields.");
+        return false;
+    }
+
+    if (checkout <= checkin) {
+        alert("Check-out date must be after check-in date.");
+        return false;
+    }
+
+    document.getElementById("successMessage").innerText =
+        "Thank you " + name + "! Your " + room + " has been successfully booked.";
+
+    document.querySelector(".booking-form").reset();
+    return false;
+}
+</script>
+
+</body>
+</html>
