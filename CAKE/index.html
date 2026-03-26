@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vince Velvet Crust Cakes</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #fff8f0;
+    margin: 0;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding-bottom: 20px;
+  }
+  h1 {
+    color: #b33a3a;
+  }
+  .products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .product {
+    border: 2px solid #e0b0a0;
+    border-radius: 10px;
+    margin: 15px;
+    width: 300px;
+    padding: 15px;
+    background-color: #fff0f5;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .product img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  .product h2 {
+    margin-top: 10px;
+    color: #804040;
+  }
+  .price {
+    font-size: 1.2em;
+    color: #d14d4d;
+    margin: 10px 0;
+  }
+  .add-btn {
+    padding: 10px 20px;
+    background-color: #b33a3a;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: auto;
+    transition: background-color 0.3s;
+  }
+  .add-btn:hover {
+    background-color: #8b2e2e;
+  }
+  /* Cart Styles */
+  #cart {
+    margin-top: 40px;
+    padding: 20px;
+    border: 2px solid #e0b0a0;
+    border-radius: 10px;
+    background-color: #fff0f5;
+  }
+  #cart h2 {
+    margin-top: 0;
+  }
+  #cart-items {
+    list-style: none;
+    padding: 0;
+  }
+  #cart-items li {
+    margin-bottom: 10px;
+  }
+  #total {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  /* Contact Form Styles */
+  section#contact {
+    margin-top: 50px;
+  }
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  button.submit-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #b33a3a;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button.submit-btn:hover {
+    background-color: #8b2e2e;
+  }
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Delicious Velvet creampie Crust Cakes</h1>
+  <p>Sweeten your moments with our handcrafted velvet crust cakes!</p>
+</header>
+
+<section class="products">
+  <!-- Product 1 -->
+  <div class="product" data-name="Chocolate Velvet Cake" data-price="25">
+    <img src="https://images.unsplash.com/photo-1578985650213-51a4b4a4b7a4" alt="Velvet Crust Cake 1" />
+    <h2>Chocolate Velvet Cake</h2>
+    <p>A rich and moist chocolate cake with a smooth velvet crust.</p>
+    <div class="price">php160.00</div>
+    <button class="add-btn" onclick="addToCart('Chocolate Velvet Cake', 25)">Add to Cart</button>
+  </div>
+  <!-- Product 2 -->
+  <div class="product" data-name="Strawberry Velvet Cake" data-price="28">
+    <img src="https://images.unsplash.com/photo-1604908553914-ec2a7f2f0a36" alt="Velvet Crust Cake 2" />
+    <h2>Strawberry creampie Velvet Cake</h2>
+    <p>Fresh strawberry flavor cream with a soft velvet crust for a delightful treat.</p>
+    <div class="price">php170.00</div>
+    <button class="add-btn" onclick="addToCart('Strawberry Velvet Cake', 28)">Add to Cart</button>
+  </div>
+  <!-- Product 3 -->
+  <div class="product" data-name="Vanilla Velvet Cake" data-price="22">
+    <img src="https://images.unsplash.com/photo-1617196035161-7a0b6f3b3a2e" alt="Velvet Crust Cake 3" />
+    <h2>Vanilla Velvet Cake</h2>
+    <p>Classic vanilla flavor with a smooth velvet crust, perfect for any celebration.</p>
+    <div class="price">php199.00</div>
+    <button class="add-btn" onclick="addToCart('Vanilla Velvet Cake', 22)">Add to Cart</button>
+  </div>
+</section>
+
+<!-- Shopping Cart -->
+<div id="cart">
+  <h2>Your Cart</h2>
+  <ul id="cart-items"></ul>
+  <div id="total">Total: php0</div>
+</div>
+
+<!-- Contact Form -->
+<section id="contact">
+  <h2>Contact Us</h2>
+  <form id="contactForm">
+    <input type="text" placeholder="Your Name" required />
+    <input type="email" placeholder="Your Email" required />
+    <textarea rows="4" placeholder="Your Message" required></textarea>
+    <button class="submit-btn" type="submit">Send Message</button>
+  </form>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>Contact us: info@vincevelvetcakes.com | Call: 123-456-7890</p>
+  <p>&copy; 2024 Vince Velvet Crust Cakes</p>
+</footer>
+
+<script>
+  const cart = [];
+
+  function addToCart(name, price) {
+    cart.push({ name, price });
+    updateCart();
+  }
+
+  function updateCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const totalContainer = document.getElementById('total');
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.textContent = `${item.name} - $${item.price}`;
+      
+      // Optionally add a remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.style.marginLeft = '10px';
+      removeBtn.onclick = () => {
+        cart.splice(index, 1);
+        updateCart();
+      };
+      li.appendChild(removeBtn);
+      
+      cartItemsContainer.appendChild(li);
+      total += item.price;
+    });
+    totalContainer.textContent = `Total: $${total}`;
+  }
+
+  // Optional: Handle contact form submission
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Thank you for your message! We will get back to you soon.');
+    this.reset();
+  });
+</script>
+</body>
+</html>
