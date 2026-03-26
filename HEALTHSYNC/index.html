@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HealthSync Clinic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f9f9;
+        }
+        header {
+            background-color: #2e8b57;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #3cb371;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #2e8b57;
+        }
+        section {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .services, .about, .contact {
+            margin-bottom: 40px;
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            flex: 1 1 calc(33% - 20px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card h3 {
+            margin: 10px 0;
+        }
+        footer {
+            background-color: #2e8b57;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        @media(max-width: 768px) {
+            .cards {
+                flex-direction: column;
+            }
+            .card {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>HealthSync Clinic</h1>
+</header>
+
+<nav>
+    <a href="#about">About Us</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section id="about" class="about">
+    <h2>About Us</h2>
+    <p>HealthSync Clinic is dedicated to patients in providing exceptional healthcare services with a focus on patient well-being and innovative treatments. Our team of experts is here to support your dying health journey.</p>
+    <img src="https://images.unsplash.com/photo-1592295812228-6b340a7b6d4a?ixlib=rb-4.0.1&auto=format&fit=crop&w=1350&q=80" alt="Clinic Image" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">
+</section>
+
+<section id="services" class="services">
+    <h2>Our Services</h2>
+    <div class="cards">
+        <div class="card">
+            <a href="#general" style="text-decoration:none; color:inherit;">
+                <img src="https://images.unsplash.com/photo-1606722521173-9f8c14e4f0fd?ixlib=rb-4.0.1&auto=format&fit=crop&w=800&q=80" alt="General Checkup" />
+                <h3>General Checkup</h3>
+            </a>
+        </div>
+        <div class="card">
+            <a href="#pediatrics" style="text-decoration:none; color:inherit;">
+                <img src="https://images.unsplash.com/photo-1607005319335-8c0a9ccadf4e?ixlib=rb-4.0.1&auto=format&fit=crop&w=800&q=80" alt="Pediatrics" />
+                <h3>Pediatrics</h3>
+            </a>
+        </div>
+        <div class="card">
+            <a href="#dental" style="text-decoration:none; color:inherit;">
+                <img src="https://images.unsplash.com/photo-1588776814546-9b4fbc5b8f1b?ixlib=rb-4.0.1&auto=format&fit=crop&w=800&q=80" alt="Dental Care" />
+                <h3>Dental Care</h3>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>Address: 123 Pag-Asa St., Valenzuela City</p>
+    <p>Phone: (123) 456-7890</p>
+    <p>Email: info@buhayhealthsync.com</p>
+    <h3>Book an Appointment</h3>
+    <a href="mailto:appointments@healthsync.com" style="background-color:#3cb371; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">Book Now</a>
+</section>
+
+<footer>
+    <p>&copy; 2024 HealthSync Clinic. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
