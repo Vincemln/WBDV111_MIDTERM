@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitTrack</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:1.8rem;font-weight:800;margin-bottom:4px}
+h1 span{color:#a78bfa}
+.sub{text-align:center;color:#6b7280;font-size:.85rem;margin-bottom:24px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat{background:#1a1a2e;border-radius:16px;padding:16px;text-align:center;border:1px solid #2a2a3e}
+.stat-icon{font-size:1.5rem;margin-bottom:4px}
+.stat-val{font-size:1.6rem;font-weight:800;color:#a78bfa}
+.stat-label{font-size:.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:.05em}
+
+/* LOG FORM */
+.card{background:#1a1a2e;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #2a2a3e}
+.card h2{font-size:1rem;font-weight:700;margin-bottom:14px;color:#e5e7eb}
+.row{display:grid;grid-template-columns:1fr 1fr 80px 80px auto;gap:8px;align-items:end}
+label{font-size:.72rem;color:#6b7280;display:block;margin-bottom:4px;text-transform:uppercase}
+input,select{width:100%;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:10px;padding:9px 10px;color:#fff;font-family:'Poppins',sans-serif;font-size:.85rem;outline:none}
+input:focus,select:focus{border-color:#a78bfa}
+.btn{padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:700;font-size:.85rem;white-space:nowrap}
+.btn-add{background:#a78bfa;color:#fff;width:100%}
+.btn-add:hover{background:#7c3aed}
+
+/* LOG LIST */
+.log-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.log-list::-webkit-scrollbar{width:4px}
+.log-list::-webkit-scrollbar-thumb{background:#a78bfa;border-radius:4px}
+.log-item{display:flex;align-items:center;gap:12px;background:#0f0f1a;border-radius:12px;padding:12px 14px;border:1px solid #2a2a3e}
+.log-emoji{font-size:1.3rem;flex-shrink:0}
+.log-info{flex:1}
+.log-name{font-weight:700;font-size:.9rem}
+.log-meta{font-size:.75rem;color:#6b7280;margin-top:2px}
+.log-cal{font-weight:800;color:#a78bfa;font-size:.9rem;white-space:nowrap}
+.del-btn{background:none;border:none;cursor:pointer;color:#4b5563;font-size:1rem;transition:color .2s}
+.del-btn:hover{color:#f87171}
+.empty{text-align:center;padding:30px;color:#4b5563;font-size:.85rem}
+
+/* GOAL BAR */
+.goal-row{display:flex;justify-content:space-between;font-size:.8rem;color:#6b7280;margin-bottom:6px}
+.bar-bg{background:#0f0f1a;border-radius:50px;height:12px;overflow:hidden;border:1px solid #2a2a3e}
+.bar-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#7c3aed,#a78bfa);transition:width .4s ease}
+
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .row{grid-template-columns:1fr 1fr;gap:8px}
+  .row>*:nth-child(3),.row>*:nth-child(4){grid-column:span 1}
+  .row>*:last-child{grid-column:span 2}
+}
+</style>
+</head>
+<body>
+
+<h1>💪 Fit<span>Track</span></h1>
+<p class="sub">Log your workouts and crush your goals</p>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-icon">🔥</div><div class="stat-val" id="s-cal">0</div><div class="stat-label">Calories</div></div>
+  <div class="stat"><div class="stat-icon">⏱️</div><div class="stat-val" id="s-min">0</div><div class="stat-label">Minutes</div></div>
+  <div class="stat"><div class="stat-icon">🏋️</div><div class="stat-val" id="s-sets">0</div><div class="stat-label">Sets</div></div>
+  <div class="stat"><div class="stat-icon">📅</div><div class="stat-val" id="s-count">0</div><div class="stat-label">Workouts</div></div>
+</div>
+
+<!-- CALORIE GOAL -->
+<div class="card">
+  <h2>🎯 Daily Calorie Goal</h2>
+  <div class="goal-row"><span id="goal-left">0 / 500 kcal burned</span><span id="goal-pct">0%</span></div>
+  <div class="bar-bg"><div class="bar-fill" id="goal-bar" style="width:0%"></div></div>
+</div>
+
+<!-- LOG FORM -->
+<div class="card">
+  <h2>➕ Log Workout</h2>
+  <div class="row">
+    <div><label>Exercise</label>
+      <select id="ex-name">
+        <option>🏃 Running</option>
+        <option>🚴 Cycling</option>
+        <option>🏊 Swimming</option>
+        <option>🏋️ Weight Lifting</option>
+        <option>🧘 Yoga</option>
+        <option>🥊 Boxing</option>
+        <option>⚽ Football</option>
+        <option>🤸 Jump Rope</option>
+        <option>🚶 Walking</option>
+        <option>💪 Push-ups</option>
+      </select>
+    </div>
+    <div><label>Intensity</label>
+      <select id="ex-int">
+        <option value="1">Light</option>
+        <option value="1.5" selected>Moderate</option>
+        <option value="2">Intense</option>
+      </select>
+    </div>
+    <div><label>Mins</label><input type="number" id="ex-min" min="1" value="30" placeholder="30"></div>
+    <div><label>Sets</label><input type="number" id="ex-sets" min="0" value="0" placeholder="0"></div>
+    <div><label>&nbsp;</label><button class="btn btn-add" onclick="addLog()">+ Add</button></div>
+  </div>
+</div>
+
+<!-- LOG LIST -->
+<div class="card">
+  <h2>📋 Today's Log</h2>
+  <div class="log-list" id="log-list">
+    <div class="empty" id="empty-msg">No workouts yet. Start moving! 🏃</div>
+  </div>
+</div>
+
+<script>
+const BASE_CAL = {
+  '🏃 Running':10,'🚴 Cycling':8,'🏊 Swimming':9,'🏋️ Weight Lifting':7,
+  '🧘 Yoga':4','🥊 Boxing':11,'⚽ Football':9','🤸 Jump Rope':12,
+  '🚶 Walking':4','💪 Push-ups':6
+};
+// fix the obj (apostrophes in keys are typos - clean version):
+const calMap = {
+  '🏃 Running':10,'🚴 Cycling':8,'🏊 Swimming':9,'🏋️ Weight Lifting':7,
+  '🧘 Yoga':4,'🥊 Boxing':11,'⚽ Football':9,'🤸 Jump Rope':12,
+  '🚶 Walking':4,'💪 Push-ups':6
+};
+const GOAL = 500;
+let logs = JSON.parse(localStorage.getItem('ft_logs')||'[]');
+
+function addLog(){
+  const name = document.getElementById('ex-name').value;
+  const intensity = parseFloat(document.getElementById('ex-int').value);
+  const mins = parseInt(document.getElementById('ex-min').value)||0;
+  const sets = parseInt(document.getElementById('ex-sets').value)||0;
+  if(!mins){alert('Enter minutes!');return;}
+  const cal = Math.round((calMap[name]||7) * mins * intensity);
+  logs.push({id:Date.now(), name, mins, sets, cal, intensity});
+  save(); render();
+}
+
+function removeLog(id){
+  logs = logs.filter(l=>l.id!==id);
+  save(); render();
+}
+
+function save(){ localStorage.setItem('ft_logs', JSON.stringify(logs)); }
+
+function render(){
+  const list = document.getElementById('log-list');
+  const empty = document.getElementById('empty-msg');
+  list.querySelectorAll('.log-item').forEach(el=>el.remove());
+
+  let totalCal=0, totalMin=0, totalSets=0;
+  logs.forEach(l=>{
+    totalCal+=l.cal; totalMin+=l.mins; totalSets+=l.sets;
+    const div=document.createElement('div');
+    div.className='log-item';
+    const intLabel=['','Light','Moderate','','Intense'][Math.round(l.intensity*2)-1]||'Moderate';
+    div.innerHTML=`
+      <div class="log-emoji">${l.name.split(' ')[0]}</div>
+      <div class="log-info">
+        <div class="log-name">${l.name.replace(/^\S+\s/,'')}</div>
+        <div class="log-meta">${l.mins} min · ${intLabel}${l.sets?' · '+l.sets+' sets':''}</div>
+      </div>
+      <div class="log-cal">🔥 ${l.cal} kcal</div>
+      <button class="del-btn" onclick="removeLog(${l.id})">✕</button>
+    `;
+    list.appendChild(div);
+  });
+
+  empty.style.display = logs.length ? 'none' : 'block';
+  document.getElementById('s-cal').textContent = totalCal;
+  document.getElementById('s-min').textContent = totalMin;
+  document.getElementById('s-sets').textContent = totalSets;
+  document.getElementById('s-count').textContent = logs.length;
+
+  const pct = Math.min(100, Math.round(totalCal/GOAL*100));
+  document.getElementById('goal-bar').style.width = pct+'%';
+  document.getElementById('goal-pct').textContent = pct+'%';
+  document.getElementById('goal-left').textContent = `${totalCal} / ${GOAL} kcal burned`;
+}
+
+render();
+</script>
+</body>
+</html>
