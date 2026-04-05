@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockMaster - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#4f46e5;--blue-light:#6366f1;--blue-pale:#eef2ff;
+  --green:#16a34a;--green-bg:#dcfce7;
+  --yellow:#d97706;--yellow-bg:#fef9c3;
+  --red:#dc2626;--red-bg:#fee2e2;
+  --sidebar:#ffffff;--main:#f8fafc;
+  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+  --white:#ffffff;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--main);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:fixed;height:100vh;top:0;left:0;z-index:50}
+.sidebar-brand{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.brand-name{font-size:1.3rem;font-weight:800;color:var(--blue);letter-spacing:-.02em}
+.brand-badge{display:inline-block;background:var(--blue-pale);color:var(--blue);font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:4px;letter-spacing:.05em}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;border-radius:0;color:var(--muted);font-weight:500;font-size:.875rem;transition:all .15s;position:relative;margin:1px 12px;border-radius:8px}
+.nav-item:hover{background:#f1f5f9;color:var(--text)}
+.nav-item.active{background:var(--blue);color:#fff}
+.nav-item.active .nav-icon{filter:brightness(10)}
+.nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.sidebar-bottom .nav-item{margin:0}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40}
+.page-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;flex:0 0 auto}
+.spacer{flex:1}
+.search-wrap{position:relative}
+.search-wrap input{background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:8px 14px 8px 38px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;width:220px;transition:border .2s}
+.search-wrap input:focus{border-color:var(--blue);background:#fff}
+.search-wrap .s-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+.btn{padding:8px 16px;border-radius:9px;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.82rem;transition:all .2s}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+.btn-primary:hover{background:var(--blue-light)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:none}
+.btn-danger:hover{background:#fca5a5}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;cursor:pointer}
+.user-name{font-weight:600;font-size:.85rem;color:var(--muted)}
+
+/* CONTENT */
+.content{padding:28px;flex:1}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:#fff;border-radius:14px;padding:20px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-icon-wrap{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.si-blue{background:#ede9fe}
+.si-yellow{background:#fef9c3}
+.si-red{background:#fee2e2}
+.si-green{background:#dcfce7}
+.stat-info{}
+.stat-val{font-size:1.65rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat-label{font-size:.78rem;color:var(--muted);margin-top:4px;font-weight:500}
+
+/* TABLE SECTION */
+.section{background:#fff;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
+.section-head{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.section-head h2{font-size:1rem;font-weight:700}
+.filter-tabs{display:flex;gap:6px}
+.f-tab{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.78rem;cursor:pointer;transition:all .15s}
+.f-tab:hover{border-color:var(--blue);color:var(--blue)}
+.f-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 20px;text-align:left;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;background:#f8fafc;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid #f1f5f9;transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8fafc}
+td{padding:14px 20px;font-size:.875rem}
+.item-name{font-weight:700;color:var(--text)}
+.sku-badge{display:inline-block;background:#f1f5f9;color:var(--muted);font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:5px;letter-spacing:.03em;font-family:monospace}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.s-healthy{background:var(--green-bg);color:var(--green)}
+.s-low{background:var(--yellow-bg);color:var(--yellow)}
+.s-critical{background:var(--red-bg);color:var(--red)}
+.action-btns{display:flex;gap:6px}
+.icon-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s}
+.icon-btn:hover{border-color:var(--blue);background:var(--blue-pale)}
+.icon-btn.del:hover{border-color:var(--red);background:var(--red-bg)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:999;backdrop-filter:blur(3px);align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:460px;box-shadow:0 25px 60px rgba(0,0,0,.2);animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:18px;color:var(--text)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.form-group input,.form-group select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;color:var(--text);outline:none;transition:border .2s;background:#fff}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:var(--shadow);transform:translateY(60px);opacity:0;transition:all .3s ease}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* PAGE SECTIONS */
+.page{display:none}
+.page.active{display:block}
+
+/* STOCK LIST PAGE extras */
+.list-toolbar{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
+.list-toolbar .search-wrap input{width:260px}
+
+/* SCAN PAGE */
+.scan-box{background:#fff;border-radius:14px;border:1px solid var(--border);padding:32px;text-align:center;max-width:480px;margin:0 auto}
+.scan-icon{font-size:4rem;margin-bottom:12px}
+.scan-box h2{font-size:1.2rem;font-weight:800;margin-bottom:8px}
+.scan-box p{color:var(--muted);font-size:.875rem;margin-bottom:20px}
+.scan-input-wrap{display:flex;gap:8px}
+.scan-input-wrap input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;transition:border .2s}
+.scan-input-wrap input:focus{border-color:var(--blue)}
+.scan-result{margin-top:20px;padding:16px;border-radius:12px;border:1.5px solid var(--border);text-align:left;display:none}
+.scan-result.show{display:block}
+
+/* REPORT PAGE */
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.report-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px}
+.report-card h3{font-size:.875rem;font-weight:700;margin-bottom:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.report-row{display:flex;justify-content:space-between;font-size:.85rem;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.report-row:last-child{border-bottom:none;font-weight:700;padding-top:10px}
+
+/* SUPPLIER ALERTS */
+.alert-item{background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.alert-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.alert-dot.red{background:var(--red)}
+.alert-dot.yellow{background:var(--yellow)}
+.alert-info{flex:1}
+.alert-title{font-weight:700;font-size:.9rem}
+.alert-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.alert-action{font-size:.78rem;font-weight:700;color:var(--blue);cursor:pointer;white-space:nowrap}
+.alert-action:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-name">StockMaster</div>
+    <div class="brand-badge">IMS</div>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="goto('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-item" onclick="goto('stocklist',this)"><span class="nav-icon">📦</span> Stock List</div>
+    <div class="nav-item" onclick="goto('scan',this)"><span class="nav-icon">📷</span> Scan / Input</div>
+    <div class="nav-item" onclick="goto('alerts',this)"><span class="nav-icon">🔔</span> Supplier Alerts</div>
+    <div class="nav-item" onclick="goto('report',this)"><span class="nav-icon">📄</span> Generate Report</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="nav-item" onclick="goto('settings',this)"><span class="nav-icon">⚙️</span> Settings</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="page-title" id="topbar-title">Dashboard</div>
+    <div class="spacer"></div>
+    <div class="search-wrap">
+      <span class="s-icon">🔍</span>
+      <input type="text" placeholder="Search items..." id="global-search" oninput="liveSearch(this.value)">
+    </div>
+    <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add Item</button>
+    <span class="user-name">Admin</span>
+    <div class="user-avatar">A</div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrap si-blue">📦</div>
+          <div class="stat-info"><div class="stat-val" id="d-total">0</div><div class="stat-label">Total Items</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap si-yellow">⚠️</div>
+          <div class="stat-info"><div class="stat-val" id="d-low">0</div><div class="stat-label">Low Stock</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap si-red">🚨</div>
+          <div class="stat-info"><div class="stat-val" id="d-critical">0</div><div class="stat-label">Critical</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap si-green">💰</div>
+          <div class="stat-info"><div class="stat-val" id="d-value">₱0</div><div class="stat-label">Inventory Value</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Recent Stock Activity</h2>
+          <div class="filter-tabs">
+            <button class="f-tab active" onclick="filterTable('all',this)">All</button>
+            <button class="f-tab" onclick="filterTable('Healthy',this)">In Stock</button>
+            <button class="f-tab" onclick="filterTable('Low Stock',this)">Low Stock</button>
+            <button class="f-tab" onclick="filterTable('Critical',this)">Critical</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Item Name</th><th>SKU</th><th>Stock Level</th><th>Status</th><th>Last Updated</th><th>Action</th>
+          </tr></thead>
+          <tbody id="dash-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STOCK LIST PAGE -->
+    <div class="page" id="page-stocklist">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <span class="s-icon">🔍</span>
+          <input type="text" placeholder="Search items..." oninput="liveSearch(this.value)">
+        </div>
+        <select class="btn btn-outline" onchange="filterByStatus(this.value)" style="cursor:pointer">
+          <option value="all">All Status</option>
+          <option value="Healthy">Healthy</option>
+          <option value="Low Stock">Low Stock</option>
+          <option value="Critical">Critical</option>
+        </select>
+        <div style="margin-left:auto">
+          <button class="btn btn-primary" onclick="openAddModal()">+ Add Item</button>
+        </div>
+      </div>
+      <div class="section">
+        <table>
+          <thead><tr>
+            <th>Item Name</th><th>SKU</th><th>Stock Level</th><th>Unit Price</th><th>Status</th><th>Last Updated</th><th>Action</th>
+          </tr></thead>
+          <tbody id="list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SCAN PAGE -->
+    <div class="page" id="page-scan">
+      <div class="scan-box">
+        <div class="scan-icon">📷</div>
+        <h2>Scan / Input Item</h2>
+        <p>Enter a SKU code to look up an item, or scan a barcode.</p>
+        <div class="scan-input-wrap">
+          <input type="text" id="scan-input" placeholder="e.g. WA-001" onkeydown="if(event.key==='Enter')scanSKU()">
+          <button class="btn btn-primary" onclick="scanSKU()">Search</button>
+        </div>
+        <div class="scan-result" id="scan-result"></div>
+      </div>
+    </div>
+
+    <!-- ALERTS PAGE -->
+    <div class="page" id="page-alerts">
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--muted)">🔔 Supplier Alerts — Items Needing Restock</h2>
+      <div id="alerts-list"></div>
+    </div>
+
+    <!-- REPORT PAGE -->
+    <div class="page" id="page-report">
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>📊 Inventory Summary</h3>
+          <div id="report-summary"></div>
+        </div>
+        <div class="report-card">
+          <h3>🚨 Critical Items</h3>
+          <div id="report-critical"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="exportCSV()" style="margin-bottom:20px">⬇️ Download CSV Report</button>
+      <div class="section">
+        <div class="section-head"><h2>Full Inventory Table</h2></div>
+        <table>
+          <thead><tr><th>Item Name</th><th>SKU</th><th>Stock Level</th><th>Unit Price</th><th>Value</th><th>Status</th></tr></thead>
+          <tbody id="report-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="section" style="max-width:500px;padding:28px">
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:20px">⚙️ Settings</h2>
+        <div class="form-group"><label>Low Stock Threshold</label><input type="number" id="set-low" value="20"></div>
+        <div class="form-group"><label>Critical Stock Threshold</label><input type="number" id="set-crit" value="10"></div>
+        <div class="form-group"><label>Admin Name</label><input type="text" id="set-admin" value="Admin"></div>
+        <div class="form-group"><label>Company / Store Name</label><input type="text" id="set-company" value="StockMaster IMS"></div>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ADD / EDIT MODAL -->
+<div class="overlay" id="modal-overlay" onclick="closeModalOut(event)">
+  <div class="modal">
+    <h3 id="modal-title">Add New Item</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Item Name</label><input id="f-name" placeholder="e.g. Widget A"></div>
+      <div class="form-group"><label>SKU</label><input id="f-sku" placeholder="e.g. WA-001"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Stock Level</label><input id="f-stock" type="number" min="0" placeholder="50"></div>
+      <div class="form-group"><label>Unit Price (₱)</label><input id="f-price" type="number" min="0" placeholder="100"></div>
+    </div>
+    <div class="form-group"><label>Category</label>
+      <select id="f-cat">
+        <option>Electronics</option><option>Tools</option><option>Gadgets</option>
+        <option>Supplies</option><option>Devices</option><option>Other</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── SETTINGS ──
+let settings = JSON.parse(localStorage.getItem('sm_settings')||'{"low":20,"crit":10,"admin":"Admin","company":"StockMaster IMS"}');
+
+// ── DATA ──
+let items = JSON.parse(localStorage.getItem('sm_items')||'null');
+if(!items){
+  items = [
+    {id:1,name:'Widget A',sku:'WA-001',stock:50,price:120,cat:'Gadgets',updated:'2024-05-20'},
+    {id:2,name:'Gadget B',sku:'GB-002',stock:5,price:350,cat:'Gadgets',updated:'2024-05-21'},
+    {id:3,name:'Tool C',sku:'TC-003',stock:12,price:80,cat:'Tools',updated:'2024-05-19'},
+    {id:4,name:'Device D',sku:'DD-004',stock:89,price:200,cat:'Devices',updated:'2024-05-22'},
+    {id:5,name:'Supply E',sku:'SE-005',stock:3,price:45,cat:'Supplies',updated:'2024-05-22'},
+    {id:6,name:'Component F',sku:'CF-006',stock:200,price:15,cat:'Electronics',updated:'2024-05-21'},
+    {id:7,name:'Module G',sku:'MG-007',stock:8,price:500,cat:'Electronics',updated:'2024-05-20'},
+    {id:8,name:'Panel H',sku:'PH-008',stock:34,price:180,cat:'Other',updated:'2024-05-18'},
+  ];
+  save();
+}
+
+let editId = null;
+let currentFilter = 'all';
+let searchTerm = '';
+
+function save(){ localStorage.setItem('sm_items', JSON.stringify(items)); }
+function saveSettings(){ 
+  settings = {
+    low: parseInt(document.getElementById('set-low').value)||20,
+    crit: parseInt(document.getElementById('set-crit').value)||10,
+    admin: document.getElementById('set-admin').value||'Admin',
+    company: document.getElementById('set-company').value||'StockMaster IMS'
+  };
+  localStorage.setItem('sm_settings', JSON.stringify(settings));
+  renderAll(); showToast('✅ Settings saved!');
+}
+
+function getStatus(stock){
+  if(stock <= settings.crit) return 'Critical';
+  if(stock <= settings.low) return 'Low Stock';
+  return 'Healthy';
+}
+function statusClass(s){ return s==='Healthy'?'s-healthy':s==='Low Stock'?'s-low':'s-critical'; }
+function statusDot(s){ return s==='Critical'?'red':'yellow'; }
+
+function today(){ return new Date().toISOString().split('T')[0]; }
+
+// ── NAV ──
+function goto(page, el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const titles={dashboard:'Dashboard',stocklist:'Stock List',scan:'Scan / Input',alerts:'Supplier Alerts',report:'Generate Report',settings:'Settings'};
+  document.getElementById('topbar-title').textContent = titles[page]||'Dashboard';
+  renderAll();
+}
+
+// ── RENDER ──
+function renderAll(){
+  renderDash(); renderList(); renderAlerts(); renderReport();
+}
+
+function getFiltered(filter){
+  let list = items;
+  if(searchTerm) list = list.filter(i=>i.name.toLowerCase().includes(searchTerm)||i.sku.toLowerCase().includes(searchTerm));
+  if(filter && filter !== 'all') list = list.filter(i=>getStatus(i.stock)===filter);
+  return list;
+}
+
+function rowHTML(i, showPrice=false){
+  const s = getStatus(i.stock);
+  const priceCol = showPrice ? `<td>₱${i.price.toLocaleString()}</td>` : '';
+  return `<tr>
+    <td class="item-name">${i.name}</td>
+    <td><span class="sku-badge">${i.sku}</span></td>
+    <td>${i.stock} units</td>
+    ${priceCol}
+    <td><span class="status-pill ${statusClass(s)}">${s}</span></td>
+    <td>${i.updated}</td>
+    <td><div class="action-btns">
+      <button class="icon-btn" onclick="openEditModal(${i.id})" title="Edit">✏️</button>
+      <button class="icon-btn del" onclick="deleteItem(${i.id})" title="Delete">🗑️</button>
+    </div></td>
+  </tr>`;
+}
+
+function renderDash(){
+  const list = getFiltered(currentFilter);
+  document.getElementById('dash-tbody').innerHTML = list.map(i=>rowHTML(i)).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No items found</td></tr>';
+  const all = items;
+  const low = all.filter(i=>getStatus(i.stock)==='Low Stock').length;
+  const crit = all.filter(i=>getStatus(i.stock)==='Critical').length;
+  const val = all.reduce((s,i)=>s+i.stock*i.price,0);
+  document.getElementById('d-total').textContent = all.length.toLocaleString();
+  document.getElementById('d-low').textContent = low;
+  document.getElementById('d-critical').textContent = crit;
+  document.getElementById('d-value').textContent = '₱'+val.toLocaleString();
+}
+
+function renderList(){
+  const list = getFiltered(currentFilter);
+  document.getElementById('list-tbody').innerHTML = list.map(i=>rowHTML(i,true)).join('') || '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">No items found</td></tr>';
+}
+
+function renderAlerts(){
+  const bad = items.filter(i=>getStatus(i.stock)!=='Healthy').sort((a,b)=>a.stock-b.stock);
+  const el = document.getElementById('alerts-list');
+  if(!bad.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">✅ All items are well-stocked!</div>'; return; }
+  el.innerHTML = bad.map(i=>{
+    const s=getStatus(i.stock);
+    return `<div class="alert-item">
+      <div class="alert-dot ${statusDot(s)}"></div>
+      <div class="alert-info">
+        <div class="alert-title">${i.name} <span class="sku-badge">${i.sku}</span></div>
+        <div class="alert-sub">${i.stock} units remaining · ${s} · Last updated ${i.updated}</div>
+      </div>
+      <span class="alert-action" onclick="openEditModal(${i.id})">Restock →</span>
+    </div>`;
+  }).join('');
+}
+
+function renderReport(){
+  const total = items.length;
+  const low = items.filter(i=>getStatus(i.stock)==='Low Stock').length;
+  const crit = items.filter(i=>getStatus(i.stock)==='Critical').length;
+  const healthy = items.filter(i=>getStatus(i.stock)==='Healthy').length;
+  const val = items.reduce((s,i)=>s+i.stock*i.price,0);
+  document.getElementById('report-summary').innerHTML = `
+    <div class="report-row"><span>Total Items</span><span>${total}</span></div>
+    <div class="report-row"><span>Healthy</span><span style="color:var(--green)">${healthy}</span></div>
+    <div class="report-row"><span>Low Stock</span><span style="color:var(--yellow)">${low}</span></div>
+    <div class="report-row"><span>Critical</span><span style="color:var(--red)">${crit}</span></div>
+    <div class="report-row"><span>Total Value</span><span>₱${val.toLocaleString()}</span></div>
+  `;
+  const critItems = items.filter(i=>getStatus(i.stock)==='Critical');
+  document.getElementById('report-critical').innerHTML = critItems.length
+    ? critItems.map(i=>`<div class="report-row"><span>${i.name}</span><span style="color:var(--red)">${i.stock} units</span></div>`).join('')
+    : '<div style="color:var(--muted);font-size:.85rem;padding:10px 0">No critical items 🎉</div>';
+  document.getElementById('report-tbody').innerHTML = items.map(i=>{
+    const s=getStatus(i.stock);
+    return `<tr><td class="item-name">${i.name}</td><td><span class="sku-badge">${i.sku}</span></td><td>${i.stock} units</td><td>₱${i.price}</td><td>₱${(i.stock*i.price).toLocaleString()}</td><td><span class="status-pill ${statusClass(s)}">${s}</span></td></tr>`;
+  }).join('');
+}
+
+// ── FILTER / SEARCH ──
+function filterTable(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.f-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDash();
+}
+function filterByStatus(v){ currentFilter = v; renderList(); }
+function liveSearch(v){ searchTerm = v.toLowerCase(); renderAll(); }
+
+// ── CRUD ──
+function openAddModal(){
+  editId=null;
+  document.getElementById('modal-title').textContent='Add New Item';
+  ['f-name','f-sku','f-stock','f-price'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-cat').value='Electronics';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function openEditModal(id){
+  const item = items.find(i=>i.id===id); if(!item) return;
+  editId = id;
+  document.getElementById('modal-title').textContent='Edit Item';
+  document.getElementById('f-name').value=item.name;
+  document.getElementById('f-sku').value=item.sku;
+  document.getElementById('f-stock').value=item.stock;
+  document.getElementById('f-price').value=item.price;
+  document.getElementById('f-cat').value=item.cat;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOut(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function saveItem(){
+  const name=document.getElementById('f-name').value.trim();
+  const sku=document.getElementById('f-sku').value.trim();
+  const stock=parseInt(document.getElementById('f-stock').value)||0;
+  const price=parseFloat(document.getElementById('f-price').value)||0;
+  const cat=document.getElementById('f-cat').value;
+  if(!name||!sku){ showToast('⚠️ Name and SKU are required!'); return; }
+  if(editId){
+    const idx=items.findIndex(i=>i.id===editId);
+    items[idx]={...items[idx],name,sku,stock,price,cat,updated:today()};
+    showToast('✅ Item updated!');
+  } else {
+    if(items.find(i=>i.sku===sku)){ showToast('⚠️ SKU already exists!'); return; }
+    items.push({id:Date.now(),name,sku,stock,price,cat,updated:today()});
+    showToast('✅ Item added!');
+  }
+  save(); closeModal(); renderAll();
+}
+
+function deleteItem(id){
+  if(!confirm('Delete this item?')) return;
+  items = items.filter(i=>i.id!==id);
+  save(); renderAll(); showToast('🗑️ Item deleted.');
+}
+
+// ── SCAN ──
+function scanSKU(){
+  const val = document.getElementById('scan-input').value.trim().toUpperCase();
+  const item = items.find(i=>i.sku===val);
+  const res = document.getElementById('scan-result');
+  if(!item){
+    res.className='scan-result show';
+    res.style.borderColor='var(--red)';
+    res.innerHTML=`<div style="color:var(--red);font-weight:700">❌ SKU not found: ${val}</div>`;
+    return;
+  }
+  const s = getStatus(item.stock);
+  res.className='scan-result show';
+  res.style.borderColor='var(--blue)';
+  res.innerHTML=`
+    <div style="font-weight:800;font-size:1rem;margin-bottom:8px">${item.name}</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px"><span class="sku-badge">${item.sku}</span> · ${item.cat}</div>
+    <div style="display:flex;gap:16px;font-size:.85rem">
+      <div><div style="color:var(--muted);font-size:.72rem">STOCK</div><div style="font-weight:700">${item.stock} units</div></div>
+      <div><div style="color:var(--muted);font-size:.72rem">PRICE</div><div style="font-weight:700">₱${item.price}</div></div>
+      <div><div style="color:var(--muted);font-size:.72rem">STATUS</div><span class="status-pill ${statusClass(s)}">${s}</span></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="openEditModal(${item.id})">✏️ Edit This Item</button>
+  `;
+}
+
+// ── EXPORT CSV ──
+function exportCSV(){
+  const rows = [['Item Name','SKU','Stock Level','Unit Price','Total Value','Status','Last Updated','Category']];
+  items.forEach(i=>rows.push([i.name,i.sku,i.stock,i.price,i.stock*i.price,getStatus(i.stock),i.updated,i.cat]));
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'stockmaster_report.csv'; a.click();
+  showToast('📥 CSV exported!');
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── INIT ──
+renderAll();
+</script>
+</body>
+</html>
