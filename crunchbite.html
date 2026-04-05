@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrunchBite — Crispy. Hot. Happiness.</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #e8142b;
+  --red-dark: #c0102a;
+  --red-light: #ff3347;
+  --yellow: #ffc600;
+  --yellow-dark: #e6b000;
+  --cream: #fff8ee;
+  --brown: #3b1e08;
+  --white: #ffffff;
+  --gray: #f5f0e8;
+  --muted: #7a5c3a;
+  --shadow: 0 8px 32px rgba(59,30,8,0.13);
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--red);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px;
+  box-shadow: 0 4px 20px rgba(232,20,43,0.35);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem; color: var(--yellow);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+.logo-bug { font-size: 1.5rem; }
+
+nav ul {
+  list-style: none; display: flex; gap: 0.2rem; align-items: center;
+}
+nav ul li a {
+  text-decoration: none; color: rgba(255,255,255,0.85);
+  font-weight: 700; font-size: 0.88rem;
+  padding: 0.5rem 0.9rem; border-radius: 50px;
+  transition: all 0.2s; letter-spacing: 0.02em;
+}
+nav ul li a:hover { background: rgba(255,255,255,0.15); color: white; }
+
+.cart-btn {
+  background: var(--yellow);
+  color: var(--brown);
+  border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800; font-size: 0.9rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 50px;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+.cart-btn:hover { background: var(--yellow-dark); transform: translateY(-1px); }
+.cart-count {
+  background: var(--red-dark);
+  color: white;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--red) 0%, #b5001f 100%);
+  padding: 3.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(255,198,0,0.18) 0%, transparent 65%);
+}
+.hero-inner { position: relative; max-width: 700px; margin: 0 auto; }
+.hero-eyebrow {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--brown);
+  font-weight: 800; font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.35rem 1rem; border-radius: 50px;
+  margin-bottom: 1rem;
+}
+.hero h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  color: white; line-height: 1.1;
+  margin-bottom: 0.8rem;
+  text-shadow: 3px 4px 0 rgba(0,0,0,0.18);
+}
+.hero h1 span { color: var(--yellow); }
+.hero p {
+  color: rgba(255,255,255,0.85); font-size: 1.05rem;
+  margin-bottom: 2rem; font-weight: 600;
+}
+.hero-badges {
+  display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.badge {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  color: white; border-radius: 50px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem; font-weight: 700;
+  border: 1.5px solid rgba(255,255,255,0.25);
+}
+.hero-emojis {
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+  display: block; margin-bottom: 0.5rem;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+/* ── CATEGORY TABS ── */
+.cat-tabs {
+  background: white;
+  padding: 1rem 2rem;
+  display: flex; gap: 0.6rem; overflow-x: auto;
+  border-bottom: 3px solid var(--gray);
+  scrollbar-width: none;
+  position: sticky; top: 68px; z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+.cat-tabs::-webkit-scrollbar { display: none; }
+.cat-tab {
+  background: var(--gray); border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 0.85rem; color: var(--muted);
+  padding: 0.55rem 1.2rem; border-radius: 50px;
+  white-space: nowrap; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.cat-tab:hover { background: #ffe0e3; color: var(--red); }
+.cat-tab.active {
+  background: var(--red); color: white;
+  box-shadow: 0 4px 12px rgba(232,20,43,0.3);
+}
+
+/* ── MAIN LAYOUT ── */
+.main-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 2rem;
+  display: grid; grid-template-columns: 1fr 340px; gap: 2rem;
+  align-items: start;
+}
+
+/* ── MENU SECTION ── */
+.menu-section h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem; color: var(--red);
+  margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.2rem;
+}
+.menu-item {
+  background: white; border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 3px 15px rgba(59,30,8,0.09);
+  transition: transform 0.22s, box-shadow 0.22s;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+  border-color: var(--yellow);
+}
+.item-img {
+  height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.item-img.chicken { background: linear-gradient(135deg, #fff3cd, #ffe088); }
+.item-img.burger  { background: linear-gradient(135deg, #ffe0c8, #ffc89a); }
+.item-img.fries   { background: linear-gradient(135deg, #fff0b0, #ffe066); }
+.item-img.drinks  { background: linear-gradient(135deg, #d0f0ff, #a0d8f0); }
+.item-img.dessert { background: linear-gradient(135deg, #ffd6e7, #ffb3cc); }
+.item-img.rice    { background: linear-gradient(135deg, #e8f5d0, #c8e89a); }
+.item-img.pasta   { background: linear-gradient(135deg, #ffe4d0, #ffc8a0); }
+.item-img.combo   { background: linear-gradient(135deg, #e8d0ff, #c8a0f0); }
+
+.item-body { padding: 0.9rem; }
+.item-name {
+  font-weight: 800; font-size: 0.92rem;
+  color: var(--brown); margin-bottom: 0.25rem; line-height: 1.3;
+}
+.item-desc {
+  font-size: 0.75rem; color: var(--muted); margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+.item-footer {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.item-price {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem; color: var(--red);
+}
+.add-btn {
+  background: var(--red); color: white;
+  border: none; cursor: pointer;
+  width: 30px; height: 30px; border-radius: 50%;
+  font-size: 1.2rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(232,20,43,0.35);
+}
+.add-btn:hover { background: var(--red-dark); transform: scale(1.15); }
+
+.best-tag {
+  position: absolute; top: 8px; left: 8px;
+  background: var(--red); color: white;
+  font-size: 0.65rem; font-weight: 800;
+  padding: 0.2rem 0.55rem; border-radius: 50px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.new-tag {
+  position: absolute; top: 8px; left: 8px;
+  background: var(--yellow); color: var(--brown);
+  font-size: 0.65rem; font-weight: 800;
+  padding: 0.2rem 0.55rem; border-radius: 50px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ── ORDER SIDEBAR ── */
+.order-panel {
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: sticky; top: 140px;
+  max-height: calc(100vh - 160px);
+  display: flex; flex-direction: column;
+}
+.order-header {
+  background: var(--red); color: white;
+  padding: 1.2rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.order-header h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem; letter-spacing: 0.5px;
+}
+.order-header .order-count {
+  background: var(--yellow); color: var(--brown);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.85rem;
+}
+
+.order-body {
+  flex: 1; overflow-y: auto; padding: 1rem;
+  scrollbar-width: thin;
+}
+.order-empty {
+  text-align: center; padding: 3rem 1.5rem;
+  color: var(--muted);
+}
+.order-empty .empty-icon { font-size: 3rem; margin-bottom: 0.8rem; display: block; }
+.order-empty p { font-size: 0.9rem; font-weight: 600; }
+
+.order-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.75rem 0;
+  border-bottom: 1.5px dashed #f0e8da;
+  animation: slideIn 0.25s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(15px)} to{opacity:1;transform:translateX(0)} }
+
+.oi-emoji { font-size: 1.5rem; flex-shrink: 0; }
+.oi-info { flex: 1; min-width: 0; }
+.oi-name { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.oi-price { font-size: 0.8rem; color: var(--red); font-weight: 700; }
+.oi-controls {
+  display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+}
+.qty-btn {
+  background: var(--gray); border: none; cursor: pointer;
+  width: 24px; height: 24px; border-radius: 50%;
+  font-size: 0.9rem; font-weight: 800; color: var(--brown);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.qty-btn:hover { background: var(--yellow); }
+.qty-num { font-weight: 800; font-size: 0.9rem; min-width: 18px; text-align: center; }
+
+.order-footer {
+  padding: 1rem 1.5rem;
+  border-top: 2px solid var(--gray);
+  background: #fffaf3;
+}
+.order-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--muted);
+}
+.order-row.total {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.2rem; color: var(--brown); margin-top: 0.6rem;
+  padding-top: 0.6rem; border-top: 2px solid var(--gray);
+}
+.order-row.total span:last-child { color: var(--red); }
+
+.checkout-btn {
+  width: 100%; margin-top: 1rem;
+  background: var(--yellow); color: var(--brown);
+  border: none; cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  padding: 0.85rem; border-radius: 14px;
+  transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  letter-spacing: 0.5px;
+}
+.checkout-btn:hover { background: var(--yellow-dark); transform: translateY(-2px); }
+.checkout-btn:disabled { background: #e0d8cc; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.clear-btn {
+  width: 100%; margin-top: 0.5rem;
+  background: transparent; color: var(--muted);
+  border: 1.5px solid #e8e0d4; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem;
+  padding: 0.6rem; border-radius: 10px;
+  transition: all 0.2s;
+}
+.clear-btn:hover { background: #fdecea; color: var(--red); border-color: #f5c6c2; }
+
+/* ── PROMO BANNER ── */
+.promo-banner {
+  background: linear-gradient(90deg, var(--yellow) 0%, #ffd000 100%);
+  padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem; flex-wrap: wrap;
+  text-align: center;
+}
+.promo-banner strong {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem; color: var(--brown);
+}
+.promo-banner span { font-size: 0.88rem; color: var(--brown); font-weight: 700; }
+
+/* ── CHECKOUT MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(30,10,5,0.5); z-index: 999;
+  backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: 24px;
+  padding: 0; width: 100%; max-width: 480px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+  animation: popIn 0.3s ease; overflow: hidden;
+}
+@keyframes popIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+
+.modal-head {
+  background: var(--red); color: white; padding: 1.5rem;
+  text-align: center;
+}
+.modal-head h2 { font-family: 'Fredoka One', cursive; font-size: 1.5rem; }
+.modal-head p { font-size: 0.85rem; opacity: 0.85; margin-top: 0.3rem; }
+.modal-body { padding: 1.5rem; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.form-group label { font-size: 0.82rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.form-group input, .form-group select {
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px; border: 2px solid #f0e8da;
+  font-family: 'Nunito', sans-serif; font-size: 0.9rem; color: var(--brown);
+  outline: none; transition: border-color 0.2s; background: var(--cream);
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--red); }
+
+.modal-order-summary {
+  background: var(--cream); border-radius: 14px;
+  padding: 1rem; margin-bottom: 1rem; max-height: 160px; overflow-y: auto;
+}
+.modal-order-summary h4 { font-size: 0.82rem; font-weight: 800; color: var(--muted); margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.modal-oi { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
+.modal-oi .name { font-weight: 700; }
+.modal-oi .price { color: var(--red); font-weight: 800; }
+
+.modal-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--red); color: white;
+  padding: 1rem 1.5rem; margin: 0 -1.5rem -1.5rem;
+}
+.modal-total-row .label { font-size: 0.9rem; font-weight: 700; }
+.modal-total-row .amount { font-family: 'Fredoka One', cursive; font-size: 1.4rem; }
+.modal-total-row .place-btn {
+  background: var(--yellow); color: var(--brown);
+  border: none; cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  padding: 0.6rem 1.5rem; border-radius: 50px;
+  transition: all 0.2s;
+}
+.modal-total-row .place-btn:hover { background: var(--yellow-dark); }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen {
+  display: none; text-align: center; padding: 3rem 2rem;
+}
+.success-screen.show { display: block; }
+.success-icon { font-size: 4rem; animation: bounce 0.6s ease; }
+@keyframes bounce { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.success-screen h2 {
+  font-family: 'Fredoka One', cursive; font-size: 2rem;
+  color: var(--red); margin: 1rem 0 0.5rem;
+}
+.success-screen p { color: var(--muted); font-size: 0.92rem; margin-bottom: 1.5rem; }
+.order-num {
+  font-family: 'Fredoka One', cursive;
+  background: var(--yellow); color: var(--brown);
+  display: inline-block; padding: 0.4rem 1.2rem; border-radius: 50px;
+  font-size: 1.3rem; margin-bottom: 1.5rem;
+}
+.done-btn {
+  background: var(--red); color: white; border: none; cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-size: 1rem;
+  padding: 0.75rem 2rem; border-radius: 50px; transition: all 0.2s;
+}
+.done-btn:hover { background: var(--red-dark); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--brown); color: white;
+  padding: 0.85rem 1.5rem; border-radius: 50px;
+  font-weight: 700; font-size: 0.9rem; z-index: 999;
+  box-shadow: var(--shadow); transition: transform 0.3s ease, opacity 0.3s ease;
+  white-space: nowrap; opacity: 0;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--brown); color: rgba(255,255,255,0.6);
+  text-align: center; padding: 2rem;
+  font-size: 0.82rem;
+}
+footer .foot-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.5rem; color: var(--yellow); margin-bottom: 0.4rem;
+}
+
+@media(max-width: 900px) {
+  .main-wrap { grid-template-columns: 1fr; }
+  .order-panel { position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 150; border-radius: 20px 20px 0 0;
+    max-height: 55vh; transform: translateY(calc(100% - 60px));
+    transition: transform 0.3s ease; }
+  .order-panel.open { transform: translateY(0); }
+  .order-header { cursor: pointer; }
+  nav ul { display: none; }
+  body { padding-bottom: 70px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="logo-bug">🍗</span> CrunchBite
+  </a>
+  <ul>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#" onclick="showToast('📍 Visit us at EDSA, QC!')">Locations</a></li>
+    <li><a href="#" onclick="showToast('📱 App coming soon!')">App</a></li>
+    <li><a href="#" onclick="showToast('🎉 Join CrunchRewards!')">Rewards</a></li>
+  </ul>
+  <button class="cart-btn" onclick="toggleCart()">
+    🛒 My Order <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- PROMO BANNER -->
+<div class="promo-banner">
+  <strong>🎉 CRUNCH DEALS ARE BACK!</strong>
+  <span>Chicken Joy + Rice + Drink for only ₱149 · Today only!</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-emojis">🍗🍔🍟</span>
+    <div class="hero-eyebrow">🔥 Best Fried Chicken in Town</div>
+    <h1>Crispy. Hot.<br><span>Happiness.</span></h1>
+    <p>Every bite is a crunch. Every meal is a memory. That's the CrunchBite promise.</p>
+    <div class="hero-badges">
+      <div class="badge">🏆 #1 Crispy Chicken</div>
+      <div class="badge">⚡ Ready in 5 mins</div>
+      <div class="badge">❤️ Filipino Flavors</div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs" id="menu">
+  <button class="cat-tab active" onclick="filterMenu('all', this)">🍽️ All Items</button>
+  <button class="cat-tab" onclick="filterMenu('combo', this)">🎁 Combos</button>
+  <button class="cat-tab" onclick="filterMenu('chicken', this)">🍗 Chicken</button>
+  <button class="cat-tab" onclick="filterMenu('burger', this)">🍔 Burgers</button>
+  <button class="cat-tab" onclick="filterMenu('rice', this)">🍚 Rice Meals</button>
+  <button class="cat-tab" onclick="filterMenu('pasta', this)">🍝 Pasta</button>
+  <button class="cat-tab" onclick="filterMenu('fries', this)">🍟 Fries & Sides</button>
+  <button class="cat-tab" onclick="filterMenu('drinks', this)">🥤 Drinks</button>
+  <button class="cat-tab" onclick="filterMenu('dessert', this)">🍦 Desserts</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap">
+
+  <!-- MENU GRID -->
+  <div class="menu-section">
+    <h2 id="menu-heading">🍽️ All Items</h2>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+
+  <!-- ORDER SIDEBAR -->
+  <div class="order-panel" id="order-panel" onclick="expandCart(event)">
+    <div class="order-header">
+      <h3>🛒 Your Order</h3>
+      <span class="order-count" id="order-count">0</span>
+    </div>
+    <div class="order-body" id="order-body">
+      <div class="order-empty" id="order-empty">
+        <span class="empty-icon">🍽️</span>
+        <p>Your order is empty.<br>Add some yummy items!</p>
+      </div>
+    </div>
+    <div class="order-footer" id="order-footer" style="display:none;">
+      <div class="order-row"><span>Subtotal</span><span id="subtotal-val">₱0.00</span></div>
+      <div class="order-row"><span>Delivery Fee</span><span>₱49.00</span></div>
+      <div class="order-row"><span>Discount</span><span id="discount-val">-₱0.00</span></div>
+      <div class="order-row total"><span>Total</span><span id="total-val">₱0.00</span></div>
+      <button class="checkout-btn" id="checkout-btn" onclick="openCheckout()">Place Order →</button>
+      <button class="clear-btn" onclick="clearCart()">Clear Order</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">🍗 CrunchBite</div>
+  <p>© 2026 CrunchBite Philippines · Happiness in Every Bite · Quezon City</p>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOut(event)">
+  <div class="modal">
+
+    <!-- FORM SCREEN -->
+    <div id="checkout-form">
+      <div class="modal-head">
+        <h2>🍗 Complete Your Order</h2>
+        <p>Fill in your details and we'll get it ready fast!</p>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" id="fname" placeholder="Juan"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="lname" placeholder="dela Cruz"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="tel" id="phone" placeholder="09XX XXX XXXX"></div>
+          <div class="form-group">
+            <label>Order Type</label>
+            <select id="order-type">
+              <option>Dine In</option>
+              <option>Take Out</option>
+              <option>Delivery</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0.8rem;">
+          <label>Delivery Address (if delivery)</label>
+          <input type="text" id="address" placeholder="Street, Barangay, City">
+        </div>
+        <div class="form-group" style="margin-bottom:0.8rem;">
+          <label>Payment Method</label>
+          <select id="payment">
+            <option>Cash on Delivery</option>
+            <option>GCash</option>
+            <option>Maya</option>
+            <option>Credit / Debit Card</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Special Instructions</label>
+          <input type="text" id="notes" placeholder="Extra sauce, no onions...">
+        </div>
+        <div class="modal-order-summary" id="modal-summary"></div>
+        <div class="modal-total-row">
+          <div>
+            <div class="label">Total Amount</div>
+            <div class="amount" id="modal-total">₱0.00</div>
+          </div>
+          <button class="place-btn" onclick="placeOrder()">🍗 Order Now!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">🎉</div>
+      <h2>Order Placed!</h2>
+      <p>Your crunch is on its way! Estimated time: <strong>15–25 mins</strong></p>
+      <div class="order-num" id="order-num">#CB-0000</div>
+      <p style="margin-bottom:1.5rem; font-size:0.85rem;">Show this number at the counter or track your delivery.</p>
+      <button class="done-btn" onclick="finishOrder()">Back to Menu 🍗</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── MENU DATA ──
+const menuItems = [
+  // COMBOS
+  { id:1, cat:'combo', emoji:'🍗🍚🥤', bg:'combo', name:'Chicken Joy Meal', desc:'1 pc crispy chicken + rice + regular drink', price:149, tag:'best' },
+  { id:2, cat:'combo', emoji:'🍔🍟🥤', bg:'combo', name:'CrunchBurger Meal', desc:'CrunchBurger + medium fries + regular drink', price:169, tag:'best' },
+  { id:3, cat:'combo', emoji:'🍗🍗🥤', bg:'combo', name:'Bucket for 2', desc:'2 pc chicken + 2 rice + 2 drinks', price:259, tag:'new' },
+  { id:4, cat:'combo', emoji:'👨‍👩‍👧‍👦🍗', bg:'combo', name:'Family Feast', desc:'6 pc chicken + 4 rice + 4 drinks + 1 pie', price:699, tag:'best' },
+
+  // CHICKEN
+  { id:5, cat:'chicken', emoji:'🍗', bg:'chicken', name:'Crispy Chicken (1pc)', desc:'Golden, crunchy, juicy — our legendary fried chicken', price:89, tag:'best' },
+  { id:6, cat:'chicken', emoji:'🍗🍗', bg:'chicken', name:'Crispy Chicken (2pc)', desc:'Double the crunch, double the happiness', price:169, tag:null },
+  { id:7, cat:'chicken', emoji:'🍖', bg:'chicken', name:'Spicy Chicken', desc:'Extra-hot crispy chicken with chili glaze', price:99, tag:'new' },
+  { id:8, cat:'chicken', emoji:'🍗', bg:'chicken', name:'Grilled Chicken', desc:'Marinated grilled chicken, smoky perfection', price:95, tag:null },
+
+  // BURGERS
+  { id:9,  cat:'burger', emoji:'🍔', bg:'burger', name:'CrunchBurger Classic', desc:'Crispy beef patty, lettuce, tomato, special sauce', price:89, tag:null },
+  { id:10, cat:'burger', emoji:'🍔', bg:'burger', name:'Double CrunchBurger', desc:'Two patties, double cheese, extra crunch', price:129, tag:'best' },
+  { id:11, cat:'burger', emoji:'🐔', bg:'burger', name:'Chicken Sandwich', desc:'Crispy chicken fillet on a toasted bun', price:95, tag:'new' },
+  { id:12, cat:'burger', emoji:'🧀', bg:'burger', name:'Cheesy CrunchBurger', desc:'Loaded with 3 kinds of melted cheese', price:139, tag:null },
+
+  // RICE MEALS
+  { id:13, cat:'rice', emoji:'🍛', bg:'rice', name:'Adobo Rice Bowl', desc:'Classic Filipino adobo over garlic fried rice', price:99, tag:'best' },
+  { id:14, cat:'rice', emoji:'🍚', bg:'rice', name:'Garlic Rice', desc:'Fragrant sinangag, perfect side', price:35, tag:null },
+  { id:15, cat:'rice', emoji:'🥩🍚', bg:'rice', name:'Beef Tapa Bowl', desc:'Sweet marinated beef over rice with egg', price:119, tag:'new' },
+
+  // PASTA
+  { id:16, cat:'pasta', emoji:'🍝', bg:'pasta', name:'Sweet-Style Spaghetti', desc:'Filipino-style spaghetti with sweet tomato & hotdog', price:79, tag:'best' },
+  { id:17, cat:'pasta', emoji:'🧀', bg:'pasta', name:'Mac & Cheese', desc:'Creamy macaroni pasta with cheese sauce', price:69, tag:null },
+
+  // FRIES & SIDES
+  { id:18, cat:'fries', emoji:'🍟', bg:'fries', name:'Regular Fries', desc:'Classic golden crispy fries', price:45, tag:null },
+  { id:19, cat:'fries', emoji:'🍟', bg:'fries', name:'Large Fries', desc:'More to share — or not!', price:65, tag:null },
+  { id:20, cat:'fries', emoji:'🌶️🍟', bg:'fries', name:'Loaded Cheesy Fries', desc:'Fries drizzled with cheese & jalapeños', price:89, tag:'new' },
+  { id:21, cat:'fries', emoji:'🧅', bg:'fries', name:'Onion Rings', desc:'Crispy battered onion rings', price:55, tag:null },
+  { id:22, cat:'fries', emoji:'🥗', bg:'fries', name:'Coleslaw', desc:'Creamy, refreshing coleslaw', price:39, tag:null },
+
+  // DRINKS
+  { id:23, cat:'drinks', emoji:'🥤', bg:'drinks', name:'Regular Coke', desc:'Ice-cold Coca-Cola (regular)', price:39, tag:null },
+  { id:24, cat:'drinks', emoji:'🧃', bg:'drinks', name:'Pineapple Juice', desc:'Fresh-tasting pineapple drink', price:39, tag:null },
+  { id:25, cat:'drinks', emoji:'🥛', bg:'drinks', name:'Crunch Shake', desc:'Thick creamy milkshake — vanilla or chocolate', price:65, tag:'best' },
+  { id:26, cat:'drinks', emoji:'☕', bg:'drinks', name:'Brewed Coffee', desc:'Fresh brewed local coffee', price:49, tag:null },
+
+  // DESSERTS
+  { id:27, cat:'dessert', emoji:'🥧', bg:'dessert', name:'Buko Pie', desc:'Classic Filipino coconut pie slice', price:49, tag:'best' },
+  { id:28, cat:'dessert', emoji:'🍦', bg:'dessert', name:'Soft Serve Ice Cream', desc:'Creamy vanilla soft-serve in a cone', price:35, tag:null },
+  { id:29, cat:'dessert', emoji:'🍮', bg:'dessert', name:'Leche Flan', desc:'Silky Filipino caramel custard', price:55, tag:'new' },
+];
+
+// ── CART ──
+let cart = [];
+
+function addToCart(id) {
+  const item = menuItems.find(m => m.id === id);
+  const existing = cart.find(c => c.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...item, qty: 1 });
+  }
+  renderCart();
+  showToast(`✅ ${item.name} added!`);
+}
+
+function changeQty(id, delta) {
+  const idx = cart.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  renderCart();
+}
+
+function clearCart() {
+  cart = [];
+  renderCart();
+  showToast('🗑️ Order cleared.');
+}
+
+function renderCart() {
+  const body = document.getElementById('order-body');
+  const footer = document.getElementById('order-footer');
+  const empty = document.getElementById('order-empty');
+  const countEl = document.getElementById('cart-count');
+  const orderCountEl = document.getElementById('order-count');
+
+  const totalQty = cart.reduce((s,c) => s + c.qty, 0);
+  countEl.textContent = totalQty;
+  orderCountEl.textContent = totalQty;
+
+  // Remove existing items
+  body.querySelectorAll('.order-item').forEach(el => el.remove());
+
+  if (cart.length === 0) {
+    empty.style.display = 'block';
+    footer.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  footer.style.display = 'block';
+
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'order-item';
+    div.innerHTML = `
+      <div class="oi-emoji">${item.emoji.split('')[0]}</div>
+      <div class="oi-info">
+        <div class="oi-name">${item.name}</div>
+        <div class="oi-price">₱${(item.price * item.qty).toFixed(2)}</div>
+      </div>
+      <div class="oi-controls">
+        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+      </div>
+    `;
+    body.appendChild(div);
+  });
+
+  const subtotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  const delivery = 49;
+  const discount = subtotal >= 500 ? 50 : 0;
+  const total = subtotal + delivery - discount;
+
+  document.getElementById('subtotal-val').textContent = `₱${subtotal.toFixed(2)}`;
+  document.getElementById('discount-val').textContent = `-₱${discount.toFixed(2)}`;
+  document.getElementById('total-val').textContent = `₱${total.toFixed(2)}`;
+}
+
+// ── MENU RENDER ──
+function renderMenu(filter = 'all') {
+  const grid = document.getElementById('menu-grid');
+  grid.innerHTML = '';
+  const items = filter === 'all' ? menuItems : menuItems.filter(m => m.cat === filter);
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'menu-item';
+    div.innerHTML = `
+      <div class="item-img ${item.bg}">
+        ${item.tag === 'best' ? '<span class="best-tag">⭐ Bestseller</span>' : ''}
+        ${item.tag === 'new'  ? '<span class="new-tag">🆕 New!</span>' : ''}
+        <span style="font-size:3.5rem">${item.emoji.split('')[0]}</span>
+      </div>
+      <div class="item-body">
+        <div class="item-name">${item.name}</div>
+        <div class="item-desc">${item.desc}</div>
+        <div class="item-footer">
+          <div class="item-price">₱${item.price}</div>
+          <button class="add-btn" onclick="addToCart(${item.id})">+</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function filterMenu(cat, btn) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const labels = {
+    all:'🍽️ All Items', combo:'🎁 Combo Meals', chicken:'🍗 Chicken',
+    burger:'🍔 Burgers', rice:'🍚 Rice Meals', pasta:'🍝 Pasta',
+    fries:'🍟 Fries & Sides', drinks:'🥤 Drinks', dessert:'🍦 Desserts'
+  };
+  document.getElementById('menu-heading').textContent = labels[cat] || '🍽️ All Items';
+  renderMenu(cat);
+}
+
+// ── CART TOGGLE (mobile) ──
+function toggleCart() {
+  const panel = document.getElementById('order-panel');
+  panel.classList.toggle('open');
+}
+function expandCart(e) {
+  if (window.innerWidth <= 900 && e.target === document.querySelector('.order-header')) {
+    document.getElementById('order-panel').classList.toggle('open');
+  }
+}
+
+// ── CHECKOUT ──
+function openCheckout() {
+  if (cart.length === 0) return;
+  // populate modal summary
+  const summaryDiv = document.getElementById('modal-summary');
+  summaryDiv.innerHTML = '<h4>Order Summary</h4>';
+  const subtotal = cart.reduce((s,c) => s + c.price * c.qty, 0);
+  const total = subtotal + 49 - (subtotal >= 500 ? 50 : 0);
+  cart.forEach(item => {
+    summaryDiv.innerHTML += `
+      <div class="modal-oi">
+        <span class="name">${item.qty}× ${item.name}</span>
+        <span class="price">₱${(item.price * item.qty).toFixed(2)}</span>
+      </div>`;
+  });
+  document.getElementById('modal-total').textContent = `₱${total.toFixed(2)}`;
+  document.getElementById('checkout-form').style.display = 'block';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModalOut(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+function placeOrder() {
+  const fname = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  if (!fname || !phone) { showToast('⚠️ Please enter your name and phone number.'); return; }
+  const orderNum = 'CB-' + String(Math.floor(1000 + Math.random() * 9000));
+  document.getElementById('order-num').textContent = '#' + orderNum;
+  document.getElementById('checkout-form').style.display = 'none';
+  document.getElementById('success-screen').classList.add('show');
+  cart = [];
+  renderCart();
+}
+
+function finishOrder() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──
+renderMenu();
+</script>
+</body>
+</html>
