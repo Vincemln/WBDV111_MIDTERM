@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0f1117;
+    --card: #1a1d27;
+    --blue: #4f8ef7;
+    --muted: #6b7280;
+    --light: #e8eaf0;
+    --border: #2a2d3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--dark); color: var(--light); min-height: 100vh; }
+
+  /* NAV */
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--blue); }
+  nav ul { list-style: none; display: flex; gap: 8px; }
+  nav ul a { color: var(--muted); text-decoration: none; padding: 8px 18px; border-radius: 6px; font-size: .9rem; transition: all .2s; }
+  nav ul a:hover, nav ul a.active { background: var(--card); color: var(--light); }
+
+  /* PAGE */
+  section { display: none; padding: 48px; max-width: 1000px; margin: 0 auto; animation: fadeIn .3s ease; }
+  section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+  h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 1px; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 32px; }
+
+  /* SEARCH */
+  .search-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; position: relative; }
+  .search-row { display: flex; gap: 10px; }
+  .search-row input {
+    flex: 1; background: var(--dark); border: 1px solid var(--border); border-radius: 8px;
+    padding: 13px 16px; color: var(--light); font-family: inherit; font-size: .95rem; outline: none;
+    transition: border .2s;
+  }
+  .search-row input:focus { border-color: var(--blue); }
+  .btn { background: var(--blue); color: white; border: none; padding: 13px 26px; border-radius: 8px; font-family: inherit; font-size: .9rem; cursor: pointer; font-weight: 600; transition: opacity .2s; }
+  .btn:hover { opacity: .85; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--blue); color: var(--blue); opacity: 1; }
+
+  /* AUTOCOMPLETE */
+  .dropdown { position: absolute; top: 86px; left: 32px; right: 32px; background: #22253a; border: 1px solid var(--border); border-radius: 8px; z-index: 10; display: none; }
+  .dropdown.show { display: block; }
+  .dropdown-item { padding: 12px 16px; cursor: pointer; font-size: .9rem; border-bottom: 1px solid var(--border); transition: background .15s; }
+  .dropdown-item:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
+  .dropdown-item:first-child { border-radius: 8px 8px 0 0; }
+  .dropdown-item:hover { background: var(--border); }
+  .dropdown-item span { color: var(--muted); font-size: .8rem; margin-left: 8px; }
+
+  /* RESULTS */
+  #results { margin-top: 24px; display: none; }
+  #results h3 { font-size: .85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .book-card { background: var(--dark); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .book-info h4 { font-size: 1rem; margin-bottom: 4px; }
+  .book-info p { color: var(--muted); font-size: .85rem; }
+  .badge { font-size: .75rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .available { background: #1a3a2a; color: #4ade80; }
+  .borrowed { background: #3a1a1a; color: #f87171; }
+
+  /* MEMBERS */
+  .members-table { width: 100%; border-collapse: collapse; }
+  .members-table th { text-align: left; padding: 12px 16px; font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .members-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  .members-table tr:hover td { background: var(--card); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--blue); display: inline-flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 600; margin-right: 10px; }
+
+  /* LOANS */
+  .loan-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .loan-card h4 { margin-bottom: 4px; }
+  .loan-card p { color: var(--muted); font-size: .85rem; }
+  .due { font-size: .8rem; color: var(--muted); text-align: right; }
+  .due .overdue { color: #f87171; font-weight: 600; }
+  .due .ok { color: #4ade80; font-weight: 600; }
+
+  /* ADD MEMBER FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .form-grid input { background: var(--dark); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--light); font-family: inherit; font-size: .9rem; outline: none; transition: border .2s; }
+  .form-grid input:focus { border-color: var(--blue); }
+  #formMsg { color: #4ade80; margin-top: 10px; display: none; font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">📚 BookVault</div>
+  <ul>
+    <li><a href="#" class="active" onclick="show('search',this)">Search</a></li>
+    <li><a href="#" onclick="show('members',this)">Members</a></li>
+    <li><a href="#" onclick="show('loans',this)">Loans</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH -->
+<section id="search" class="active">
+  <h2>Library Record</h2>
+  <p class="subtitle">Search the entire catalog by title, author, or genre.</p>
+  <div class="search-box">
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Enter book title, author, or genre..." autocomplete="off"
+        oninput="handleInput(this.value)" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn" onclick="doSearch()">Search</button>
+      <button class="btn btn-ghost" onclick="clearSearch()">Clear</button>
+    </div>
+    <div class="dropdown" id="dropdown"></div>
+    <div id="results">
+      <h3>Results</h3>
+      <div id="bookList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section id="members">
+  <h2>Members</h2>
+  <p class="subtitle">Registered library card holders.</p>
+  <div class="search-box" style="margin-bottom:24px">
+    <div class="form-grid">
+      <input type="text" id="mName" placeholder="Full Name">
+      <input type="email" id="mEmail" placeholder="Email Address">
+    </div>
+    <button class="btn" onclick="addMember()">+ Add Member</button>
+    <p id="formMsg">✓ Member added successfully!</p>
+  </div>
+  <table class="members-table">
+    <thead><tr><th>Name</th><th>Email</th><th>Books Borrowed</th><th>Status</th></tr></thead>
+    <tbody id="memberTable">
+      <tr><td><span class="avatar">JD</span>Jane Doe</td><td>jane@mail.com</td><td>3</td><td><span class="badge available">Active</span></td></tr>
+      <tr><td><span class="avatar" style="background:#8b5cf6">MR</span>Mark Reyes</td><td>mark@mail.com</td><td>1</td><td><span class="badge available">Active</span></td></tr>
+      <tr><td><span class="avatar" style="background:#ec4899">SC</span>Sara Cruz</td><td>sara@mail.com</td><td>0</td><td><span class="badge borrowed">Inactive</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- LOANS -->
+<section id="loans">
+  <h2>Active Loans</h2>
+  <p class="subtitle">Currently borrowed books and due dates.</p>
+  <div class="loan-card">
+    <div><h4>Naruto Vol. 1</h4><p>Borrowed by: Jane Doe</p></div>
+    <div class="due">Due: Apr 20, 2026<br><span class="ok">On time</span></div>
+  </div>
+  <div class="loan-card">
+    <div><h4>One Piece Vol. 1</h4><p>Borrowed by: Mark Reyes</p></div>
+    <div class="due">Due: Apr 10, 2026<br><span class="overdue">Overdue</span></div>
+  </div>
+  <div class="loan-card">
+    <div><h4>Jujutsu Kaisen Vol. 1</h4><p>Borrowed by: Jane Doe</p></div>
+    <div class="due">Due: Apr 28, 2026<br><span class="ok">On time</span></div>
+  </div>
+  <div class="loan-card">
+    <div><h4>Attack on Titan Vol. 3</h4><p>Borrowed by: Jane Doe</p></div>
+    <div class="due">Due: Apr 5, 2026<br><span class="overdue">Overdue</span></div>
+  </div>
+</section>
+
+<script>
+  const books = [
+    { title: "Naruto Vol. 1", author: "Masashi Kishimoto", genre: "Manga", status: "available" },
+    { title: "One Piece Vol. 1", author: "Eiichiro Oda", genre: "Manga", status: "borrowed" },
+    { title: "Jujutsu Kaisen Vol. 1", author: "Gege Akutami", genre: "Manga", status: "available" },
+    { title: "Attack on Titan Vol. 1", author: "Hajime Isayama", genre: "Manga", status: "available" },
+    { title: "Harry Potter", author: "J.K. Rowling", genre: "Fantasy", status: "borrowed" },
+    { title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", status: "available" },
+    { title: "Dune", author: "Frank Herbert", genre: "Sci-Fi", status: "available" },
+    { title: "1984", author: "George Orwell", genre: "Dystopian", status: "borrowed" },
+  ];
+
+  function show(id, el) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav ul a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (el) { el.classList.add('active'); event.preventDefault(); }
+  }
+
+  function handleInput(val) {
+    const dd = document.getElementById('dropdown');
+    if (!val) { dd.classList.remove('show'); return; }
+    const matches = books.filter(b =>
+      b.title.toLowerCase().includes(val.toLowerCase()) ||
+      b.author.toLowerCase().includes(val.toLowerCase()) ||
+      b.genre.toLowerCase().includes(val.toLowerCase())
+    ).slice(0, 5);
+    if (!matches.length) { dd.classList.remove('show'); return; }
+    dd.innerHTML = matches.map(b =>
+      `<div class="dropdown-item" onclick="selectBook('${b.title}')">
+        ${b.title} <span>${b.author}</span>
+      </div>`
+    ).join('');
+    dd.classList.add('show');
+  }
+
+  function selectBook(title) {
+    document.getElementById('searchInput').value = title;
+    document.getElementById('dropdown').classList.remove('show');
+    doSearch();
+  }
+
+  function doSearch() {
+    const val = document.getElementById('searchInput').value.toLowerCase();
+    document.getElementById('dropdown').classList.remove('show');
+    if (!val) return;
+    const matches = books.filter(b =>
+      b.title.toLowerCase().includes(val) ||
+      b.author.toLowerCase().includes(val) ||
+      b.genre.toLowerCase().includes(val)
+    );
+    const list = document.getElementById('bookList');
+    list.innerHTML = matches.length ? matches.map(b => `
+      <div class="book-card">
+        <div class="book-info">
+          <h4>${b.title}</h4>
+          <p>${b.author} &nbsp;·&nbsp; ${b.genre}</p>
+        </div>
+        <span class="badge ${b.status}">${b.status === 'available' ? 'Available' : 'Borrowed'}</span>
+      </div>`).join('') : '<p style="color:var(--muted)">No books found.</p>';
+    document.getElementById('results').style.display = 'block';
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('dropdown').classList.remove('show');
+    document.getElementById('results').style.display = 'none';
+  }
+
+  function addMember() {
+    const n = document.getElementById('mName').value.trim();
+    const e = document.getElementById('mEmail').value.trim();
+    if (!n || !e) { alert('Please fill in both fields.'); return; }
+    const initials = n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const colors = ['#4f8ef7','#8b5cf6','#ec4899','#f59e0b','#10b981'];
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    const row = document.createElement('tr');
+    row.innerHTML = `<td><span class="avatar" style="background:${c}">${initials}</span>${n}</td><td>${e}</td><td>0</td><td><span class="badge available">Active</span></td>`;
+    document.getElementById('memberTable').appendChild(row);
+    document.getElementById('mName').value = '';
+    document.getElementById('mEmail').value = '';
+    const msg = document.getElementById('formMsg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-box')) document.getElementById('dropdown').classList.remove('show');
+  });
+</script>
+</body>
+</html>
